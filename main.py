@@ -50,6 +50,9 @@ class Theme:
         result = "\n".join(lines)
         with open(confpath, "w") as file:
             file.write(result)
+    def _apply_gtk(self):
+        """Apply the gtk theme"""
+        os.symlink("~/.dotfiles/themes/gtk/{self.gtk_theme}.ini", "~/.config/gtk-3.0/settings.ini")
 
     def apply(self):
         """Apply this theme"""
@@ -61,6 +64,8 @@ class Theme:
             self._apply_polybar()
         if self.alacritty_theme:
             self._apply_alacritty()
+        if self.gtk_theme:
+            self._apply_gtk()
 
 
 class Manager:
