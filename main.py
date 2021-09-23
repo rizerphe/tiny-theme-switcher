@@ -50,9 +50,28 @@ class Theme:
         result = "\n".join(lines)
         with open(confpath, "w") as file:
             file.write(result)
+
     def _apply_gtk(self):
         """Apply the gtk theme"""
-        os.symlink("~/.dotfiles/themes/gtk/{self.gtk_theme}.ini", "~/.config/gtk-3.0/settings.ini")
+        confpath = os.path.join(xdg_config_home(), "gtk-3.0", "settings.ini")
+        sourcepath = os.path.join(xdg_config_home(), "gtk-3.0", f"{self.gtk_theme}.ini")
+        if os.path.exists(confpath):
+            os.remove(confpath)
+        os.symlink(sourcepath, confpath)
+
+        confpath = os.path.join(xdg_config_home(), "gtk-3.0", "settingsrc")
+        sourcepath = os.path.join(xdg_config_home(), "gtk-3.0", f"{self.gtk_theme}rc")
+        if os.path.exists(confpath):
+            os.remove(confpath)
+        os.symlink(sourcepath, confpath)
+
+        confpath = os.path.join(xdg_config_home(), "gtk-3.0", "settingsrc.mine")
+        sourcepath = os.path.join(
+            xdg_config_home(), "gtk-3.0", f"{self.gtk_theme}rc.mine"
+        )
+        if os.path.exists(confpath):
+            os.remove(confpath)
+        os.symlink(sourcepath, confpath)
 
     def apply(self):
         """Apply this theme"""
