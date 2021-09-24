@@ -9,7 +9,7 @@ from dataclasses import dataclass, asdict, fields
 
 @dataclass
 class Theme:
-    """A base theme container, uses pyserde for (de)serialization"""
+    """A base theme container"""
 
     wallpaper: str = None
     rofi_theme: str = None
