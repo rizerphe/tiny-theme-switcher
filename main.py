@@ -1,5 +1,6 @@
 import os
 import yaml
+import json
 import click
 import subprocess
 from typing import Optional
@@ -16,6 +17,7 @@ class Theme:
     polybar_theme: str = None
     gtk_theme: str = None
     alacritty_theme: str = None
+    vscode_theme: str = None
 
     def _apply_wallpaper(self):
         """Use feh to apply the current wallpaper"""
@@ -73,6 +75,26 @@ class Theme:
             os.remove(confpath)
         os.symlink(sourcepath, confpath)
 
+    def _apply_vscode(self):
+        """Apply the vscode theme"""
+        globalconf = os.path.join(
+            xdg_config_home(), "tiny-theme-switcher", "vscode", "global.json"
+        )
+        themeconf = os.path.join(
+            xdg_config_home(),
+            "tiny-theme-switcher",
+            "vscode",
+            "themes",
+            f"{self.vscode_theme}.json",
+        )
+        destination = os.path.join(xdg_config_home(), "Code", "User", "settings.json")
+        config = dict(
+            (json.load(open(globalconf)) if os.path.exists(globalconf) else {}),
+            **(json.load(open(themeconf)) if self.vscode_theme else {}),
+        )
+        if config or os.path.exists(destination):
+            json.dump(config, open(destination, "w"))
+
     def apply(self):
         """Apply this theme"""
         if self.wallpaper:
@@ -85,6 +107,7 @@ class Theme:
             self._apply_alacritty()
         if self.gtk_theme:
             self._apply_gtk()
+        self._apply_vscode()
 
 
 class Manager:
