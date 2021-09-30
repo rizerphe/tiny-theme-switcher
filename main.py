@@ -38,7 +38,7 @@ class Theme:
         """Modify the polybar conffile to use what's needed"""
         confpath = os.path.join(xdg_config_home(), "polybar", "colors")
         with open(confpath, "w") as file:
-            file.write(f"include-file='~/.config/polybar/themes/{self.polybar_theme}'")
+            file.write(f"include-file=\"~/.config/polybar/themes/{self.polybar_theme}\"")
 
     def _apply_alacritty(self):
         """Apply the alacritty theme"""
