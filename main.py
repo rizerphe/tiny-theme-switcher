@@ -2,6 +2,8 @@ import os
 import yaml
 import json
 import click
+import shutil
+import pathlib
 import subprocess
 from typing import Optional
 from xdg import xdg_config_home
@@ -59,21 +61,21 @@ class Theme:
         sourcepath = os.path.join(xdg_config_home(), "gtk-3.0", f"{self.gtk_theme}.ini")
         if os.path.exists(confpath):
             os.remove(confpath)
-        os.symlink(sourcepath, confpath)
+        shutil.copy2(sourcepath, confpath)
 
-        confpath = os.path.join(xdg_config_home(), "gtk-3.0", "settingsrc")
+        confpath = os.path.join(pathlib.Path.home(), ".gtkrc-2.0")
         sourcepath = os.path.join(xdg_config_home(), "gtk-3.0", f"{self.gtk_theme}rc")
         if os.path.exists(confpath):
             os.remove(confpath)
-        os.symlink(sourcepath, confpath)
+        shutil.copy2(sourcepath, confpath)
 
-        confpath = os.path.join(xdg_config_home(), "gtk-3.0", "settingsrc.mine")
+        confpath = os.path.join(pathlib.Path.home(), ".gtkrc-2.0.mine")
         sourcepath = os.path.join(
             xdg_config_home(), "gtk-3.0", f"{self.gtk_theme}rc.mine"
         )
         if os.path.exists(confpath):
             os.remove(confpath)
-        os.symlink(sourcepath, confpath)
+        shutil.copy2(sourcepath, confpath)
 
     def _apply_vscode(self):
         """Apply the vscode theme"""
