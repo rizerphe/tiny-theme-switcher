@@ -8,6 +8,8 @@ import subprocess
 from typing import Optional
 from xdg import xdg_config_home
 from dataclasses import dataclass, asdict, fields
+import glob
+import random
 
 
 @dataclass
@@ -23,7 +25,17 @@ class Theme:
 
     def _apply_wallpaper(self):
         """Use feh to apply the current wallpaper"""
-        subprocess.call(["feh", "--bg-fill", self.wallpaper])
+        wallpapers = []
+        if os.path.isfile(self.wallpaper):
+            wallpapers.append(self.wallpaper)
+        if os.path.isdir(self.wallpaper):
+            wallpapers += [os.path.join(self.wallpaper, wallpaper) for wallpaper in os.listdir(self.wallpaper)]
+        if len(wallpapers) == 0:
+            wallpapers = glob.glob(self.wallpaper)
+        if len(wallpapers) == 0:
+            return
+        wallpaper = random.choice(wallpapers)
+        subprocess.call(["feh", "--bg-fill", wallpaper])
 
     def _apply_rofi(self):
         """Modify the config.rasi to use the selected theme"""
@@ -41,6 +53,7 @@ class Theme:
         confpath = os.path.join(xdg_config_home(), "polybar", "colors")
         with open(confpath, "w") as file:
             file.write(f"include-file=\"~/.config/polybar/themes/{self.polybar_theme}\"")
+        os.system("ps -ef | grep polybarStart | grep -v grep | awk '{print $2}' | xargs kill")
 
     def _apply_alacritty(self):
         """Apply the alacritty theme"""
